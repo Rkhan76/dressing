@@ -5,17 +5,16 @@ body {
   align-items: center;
   gap: 20px;
   margin-top: 20px;
+  background-color: lightpink;
 }
 
-#slots, #colors {
-  display: flex;
-  gap: 10px;
+#slots{
+  gap: 5px;
 }
 
 .slot, .color {
-  width: 50px;
-  height: 50px;
-  border: 2px solid black;
+  border-radius: 10px;
+    height: 200px;
 }
 
 .slot {
@@ -37,3 +36,27 @@ img{
   height: 50px;
 
 }
+
+/*  */
+.option-container{
+  gap: 13px;
+}
+
+.optionImg {
+  height: 130px;
+  background-color: rgb(73, 72, 73);
+  border-radius: 10px;
+  transition: transform 0.3s ease; /* Adding transition for smooth scaling */
+}
+
+.optionImg:hover {
+  transform: scale(1.1); /* Increasing size on hover */
+}
+
+
+/*  */
+.steps{
+  width: 100%;
+  height: 100%;
+}
+
