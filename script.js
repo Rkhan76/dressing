@@ -1,22 +1,129 @@
-let hoverSound = new Audio();
+let heartCount = 3;
 
-let dragBoolean = false
-document.querySelectorAll('.steps').forEach(item => {
+
+
+
+// on lond page load this portion will shuffle the option array boxes
+const images = [
+  { src: "img/number-one.png", sound: "sounds/Blip01.wav", step: "one" },
+  { src: "img/number-two.png", sound: "sounds/Blip02.wav", step: "two" },
+  { src: "img/number-three.png", sound: "sounds/Blip03.wav", step: "three" },
+  { src: "img/number-four.png", sound: "sounds/Blip04.wav", step: "four" },
+  { src: "img/number-five.png", sound: "sounds/Blip05.wav", step: "five" },
+  { src: "img/number-six.png", sound: "sounds/Blip06.wav", step: "six" },
+  { src: "img/number-seven.png", sound: "sounds/sound1.wav", step: "seven" },
+  { src: "img/number-eight.png", sound: "sounds/sound1.mp3", step: "eight" },
+  { src: "img/number-nine.png", sound: "sounds/sound1.mp3", step: "nine" },
+  { src: "img/number-tenth.png", sound: "sounds/sound1.mp3", step: "tenth" },
+];
+
+function loadImages() {
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  shuffleArray(images)
+
+  const container = document.getElementById("color");
+
+  images.forEach((image) => {
+    const div = document.createElement("div");
+    div.classList.add("col-1", "optionImg");
+    const img = document.createElement("img");
+    img.classList.add("steps");
+    img.setAttribute("data-sound", image.sound);
+    img.setAttribute("data-step", image.step);
+    img.setAttribute("draggable", "true");
+    img.setAttribute("src", image.src);
+    img.setAttribute("alt", "");
+    div.appendChild(img);
+    container.appendChild(div);
+  });
+
+  afterLoadThePage()
+}
+
+window.addEventListener("load", loadImages);
+
+/*==========================================================================*/
+// timer code 
+
+// function startTimer() {
+//   let seconds = 0;
+//   setInterval(() => {
+//     seconds++;
+//     const minutes = Math.floor(seconds / 60);
+//     const formattedSeconds = seconds % 60;
+//     const timeDisplay = `${minutes < 10 ? '0' : ''}${minutes}:${formattedSeconds < 10 ? '0' : ''}${formattedSeconds}`;
+//     document.querySelector('.container.bg-success span').textContent = timeDisplay;
+//   }, 1000);
+// }
+
+// window.addEventListener('load', startTimer);
+
+/* =========================================================================== */
+
+
+function updateHeartCount() {
+  document.querySelector('.second img[alt="heart"] + span').textContent = heartCount;
+}
+
+function handleWrongMatch() {
+  heartCount--;
+  updateHeartCount();
+  if (heartCount === 0) {
+    const modal = new bootstrap.Modal(document.getElementById('modalId'));
+    modal.show();
+    const retryButton = document.getElementById('retryButton');
+    retryButton.addEventListener('click', () => {
+      heartCount = 3;
+      updateHeartCount();
+    });
+  }
+}
+
+
+
+window.addEventListener('load', () => {
+  startTimer();
+  updateHeartCount();
+});
+
+
+
+
+
+
+
+
+
+
+/* =========================================================================== */
+function afterLoadThePage(){
+  let hoverSound = new Audio();
+  let dragBoolean = false
+
+  
+
+
+const dragOption = document.querySelectorAll('.steps')
+dragOption.forEach(item => {
   item.addEventListener('dragstart', dragStart);
   item.addEventListener('dragend', dragEnd);
 });
 
 function dragStart(e) {
-  const data = e.dataTransfer.setData('step', e.target.dataset.step);
-  setTimeout(() => this.classList.add('hide'), 0);
+  const step = e.target.dataset.step;
+  e.dataTransfer.setData('step', step);
 }
 
+
 function dragEnd() {
-  if(dragBoolean === false){
-    this.classList.remove('hide');
-  }
-  console.log("dragend")
-  dragBoolean = false
+  console.log('hhllo dragend')
 }
 
 document.querySelectorAll('.slot').forEach(slot => {
@@ -56,35 +163,24 @@ function dragDrop(e) {
 
     hoverSound.src = 'sounds/pass.wav';
     hoverSound.play();
+
+
+     // Blur the box after successful drop
+    const matchingBox = document.querySelector(`.steps[data-step="${step}"]`);
+    console.log("matchig box :",matchingBox)
+    if (matchingBox) {
+      matchingBox.classList.add('blurred');
+    }
+    console.log("matchinng class after :",matchingBox)
   } else {
-    hoverSound.src = 'sounds/fail.wav';
-    console.log(hoverSound)
+    hoverSound.src = 'sounds/fail.mp3';
     hoverSound.play();
-    // setTimeout(() => {
-    //   alert("That's not the right color for this slot!");
-    // }, 1000); // Delay the alert by 100 milliseconds
+
+    handleWrongMatch();
   }
+
 }
 
+}
 
-
-
-//audio on hover options
-let optionImages = document.getElementsByClassName('optionImg');
-
-Array.from(optionImages).forEach(function(element) {
-  element.addEventListener('mouseover', function(e) {
-    let soundFile = e.currentTarget.querySelector('.steps').getAttribute('data-sound');
-    
-    if (soundFile) {
-      hoverSound.src = soundFile;
-      hoverSound.play();
-    }
-  });
-
-  element.addEventListener('mouseout', function() {
-    hoverSound.pause();
-    hoverSound.currentTime = 0;
-  });
-});
 
