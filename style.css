@@ -8,6 +8,30 @@ body {
   background-color: lightpink;
 }
 
+.custom_btn {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  background-color: #673AB7;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Adding transition effect */
+
+}
+
+.custom_btn:hover {
+  background-color: #512b94;
+}
+
+.non-draggable {
+  pointer-events: none;
+}
+
 #slots{
   gap: 5px;
 }

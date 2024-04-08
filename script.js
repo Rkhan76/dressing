@@ -1,9 +1,9 @@
+const playAndPauseButton = document.getElementById('playAndPauseButton')
+
+
 let heartCount = 3;
 
 
-
-
-// on lond page load this portion will shuffle the option array boxes
 const images = [
   { src: "img/number-one.png", sound: "sounds/Blip01.wav", step: "one" },
   { src: "img/number-two.png", sound: "sounds/Blip02.wav", step: "two" },
@@ -26,7 +26,7 @@ function loadImages() {
     return array;
   }
 
-  shuffleArray(images)
+  shuffleArray(images);
 
   const container = document.getElementById("color");
 
@@ -44,29 +44,10 @@ function loadImages() {
     container.appendChild(div);
   });
 
-  afterLoadThePage()
+  afterLoadThePage();
 }
 
 window.addEventListener("load", loadImages);
-
-/*==========================================================================*/
-// timer code 
-
-// function startTimer() {
-//   let seconds = 0;
-//   setInterval(() => {
-//     seconds++;
-//     const minutes = Math.floor(seconds / 60);
-//     const formattedSeconds = seconds % 60;
-//     const timeDisplay = `${minutes < 10 ? '0' : ''}${minutes}:${formattedSeconds < 10 ? '0' : ''}${formattedSeconds}`;
-//     document.querySelector('.container.bg-success span').textContent = timeDisplay;
-//   }, 1000);
-// }
-
-// window.addEventListener('load', startTimer);
-
-/* =========================================================================== */
-
 
 function updateHeartCount() {
   document.querySelector('.second img[alt="heart"] + span').textContent = heartCount;
@@ -76,111 +57,112 @@ function handleWrongMatch() {
   heartCount--;
   updateHeartCount();
   if (heartCount === 0) {
-    const modal = new bootstrap.Modal(document.getElementById('modalId'));
-    modal.show();
-    const retryButton = document.getElementById('retryButton');
-    retryButton.addEventListener('click', () => {
-      heartCount = 3;
-      updateHeartCount();
-    });
+    gameOver()
   }
 }
-
 
 
 window.addEventListener('load', () => {
-  startTimer();
   updateHeartCount();
 });
 
-
-
-
-
-
-
-
-
-
-/* =========================================================================== */
-function afterLoadThePage(){
+function afterLoadThePage() {
   let hoverSound = new Audio();
-  let dragBoolean = false
-
   
 
+  const dragOption = document.querySelectorAll('.steps');
+  dragOption.forEach(item => {
+    item.addEventListener('dragstart', dragStart);
+    item.addEventListener('dragend', dragEnd);
+  });
 
-const dragOption = document.querySelectorAll('.steps')
-dragOption.forEach(item => {
-  item.addEventListener('dragstart', dragStart);
-  item.addEventListener('dragend', dragEnd);
-});
-
-function dragStart(e) {
-  const step = e.target.dataset.step;
-  e.dataTransfer.setData('step', step);
-}
-
-
-function dragEnd() {
-  console.log('hhllo dragend')
-}
-
-document.querySelectorAll('.slot').forEach(slot => {
-  slot.addEventListener('dragover', dragOver);
-  slot.addEventListener('dragenter', dragEnter);
-  slot.addEventListener('dragleave', dragLeave);
-  slot.addEventListener('drop', dragDrop);
-});
-
-function dragOver(e) {
-  e.preventDefault();
-}
-
-function dragEnter(e) {
-  e.preventDefault();
-  this.style.borderColor = 'yellow';
-}
-
-function dragLeave() {
-  this.style.borderColor = 'black';
-}
-
-function dragDrop(e) {
-  const step = e.dataTransfer.getData('step');
-  console.log("hllo i am here :", e.target.dataset.step)
-  if (this.dataset.step === step) {
-    const img = document.createElement('img');
-    const imagePath = 'img/number-' + e.target.dataset.step + '.png'
-    img.src = imagePath;
-    img.style.width = "100%"; 
-    img.style.height = "100%";
-    this.appendChild(img);
-    this.style.backgroundColor = imagePath;
-    this.style.borderColor = 'black'; 
-
-    dragBoolean = true;
-
-    hoverSound.src = 'sounds/pass.wav';
-    hoverSound.play();
-
-
-     // Blur the box after successful drop
-    const matchingBox = document.querySelector(`.steps[data-step="${step}"]`);
-    console.log("matchig box :",matchingBox)
-    if (matchingBox) {
-      matchingBox.classList.add('blurred');
-    }
-    console.log("matchinng class after :",matchingBox)
-  } else {
-    hoverSound.src = 'sounds/fail.mp3';
-    hoverSound.play();
-
-    handleWrongMatch();
+  function dragStart(e) {
+    const step = e.target.dataset.step;
+    e.dataTransfer.setData('step', step);
   }
 
+  function dragEnd() {
+    console.log('hhllo dragend');
+  }
+
+document.querySelectorAll('.slot').forEach(slot => {
+    slot.addEventListener('dragover', dragOver);
+    slot.addEventListener('dragenter', dragEnter);
+    slot.addEventListener('dragleave', dragLeave);
+    slot.addEventListener('drop', dragDrop);
+  });
+
+  function dragOver(e) {
+    e.preventDefault();
+  }
+
+  function dragEnter(e) {
+    e.preventDefault();
+    this.style.borderColor = 'yellow';
+  }
+
+  function dragLeave() {
+    this.style.borderColor = 'black';
+  }
+
+  function dragDrop(e) {
+    const step = e.dataTransfer.getData('step');
+    if (this.dataset.step === step) {
+      const img = document.createElement('img');
+      const imagePath = 'img/number-' + e.target.dataset.step + '.png';
+      img.src = imagePath;
+      img.style.width = "100%";
+      img.style.height = "100%";
+      this.appendChild(img);
+      this.style.backgroundColor = imagePath;
+      this.classList.add("border", "border-2", "border-success");
+      this.classList.add('non-draggable');
+
+      dragBoolean = true;
+
+      hoverSound.src = 'sounds/pass.wav';
+      hoverSound.play();
+
+      const matchingBox = document.querySelector(`.steps[data-step="${step}"]`);
+      if (matchingBox) {
+        matchingBox.classList.add('blurred');
+        matchingBox.classList.add('non-draggable');
+      }
+    } else {
+      this.classList.add("border", "border-2", "border-danger");
+      setTimeout(() => {
+        this.classList.remove("border", "border-2", "border-danger");
+      }, 1000);
+      hoverSound.src = 'sounds/fail.mp3';
+      hoverSound.play();
+
+      handleWrongMatch();
+    }
+  }
 }
 
+
+
+
+
+function playAndPause() {
+  console.log(playAndPauseButton)
+  console.log(playAndPauseButton.getAttribute('src'))
+  if (playAndPauseButton.getAttribute('src') === 'img/playIcon.png') {
+    playAndPauseButton.src = 'img/pauseIcon.png';
+  } 
 }
 
+function gameOver(){
+  const gameOverModal = document.getElementById('gameOverModal')
+  gameOverModal.classList.add('show', 'd-block')
+  console.log('hhllllllddsd')
+}
 
+function restart(){
+  window.location.reload();
+}
+
+function resume(){
+  playAndPauseButton.src = 'img/playIcon.png';
+}
