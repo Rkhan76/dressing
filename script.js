@@ -1,7 +1,12 @@
 const playAndPauseButton = document.getElementById('playAndPauseButton')
+const finalScore = document.getElementById('winScore')
+const gameOverScore = document.getElementById('gameOverScore')
+const gameWinModal = document.getElementById('gameWinModal')
 
 
 let heartCount = 3;
+let correctCount = 0;
+let finalScoreCount = 0;
 
 
 const images = [
@@ -50,21 +55,25 @@ function loadImages() {
 window.addEventListener("load", loadImages);
 
 function updateHeartCount() {
-  document.querySelector('.second img[alt="heart"] + span').textContent = heartCount;
+  if (heartCount > 0) {
+    const hearts = document.getElementById('hearts')
+    const heartIcons = hearts.querySelectorAll('.bi-heart-fill')
+    console.log(heartIcons)
+    heartIcons[heartCount - 1].classList.remove('bi-heart-fill')
+    heartIcons[heartCount - 1].classList.add('bi-heart')
+  }
 }
 
 function handleWrongMatch() {
+  updateHeartCount()
   heartCount--;
-  updateHeartCount();
   if (heartCount === 0) {
     gameOver()
   }
 }
 
 
-window.addEventListener('load', () => {
-  updateHeartCount();
-});
+
 
 function afterLoadThePage() {
   let hoverSound = new Audio();
@@ -128,6 +137,10 @@ document.querySelectorAll('.slot').forEach(slot => {
         matchingBox.classList.add('blurred');
         matchingBox.classList.add('non-draggable');
       }
+      correctCount++
+      finalScoreCount += 5
+      winCheck()
+      
     } else {
       this.classList.add("border", "border-2", "border-danger");
       setTimeout(() => {
@@ -156,7 +169,7 @@ function playAndPause() {
 function gameOver(){
   const gameOverModal = document.getElementById('gameOverModal')
   gameOverModal.classList.add('show', 'd-block')
-  console.log('hhllllllddsd')
+  gameOverScore.innerHTML = finalScoreCount
 }
 
 function restart(){
@@ -165,4 +178,15 @@ function restart(){
 
 function resume(){
   playAndPauseButton.src = 'img/playIcon.png';
+}
+
+function winCheck(){
+  console.log("wincheck")
+  if (correctCount === 6) {
+    console.log("hllo i have win")
+    finalScoreCount += ( heartCount * 10)
+    gameWinModal.classList.add('show', 'd-block')
+    finalScore.innerHTML = finalScoreCount
+  }
+  return
 }

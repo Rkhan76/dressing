@@ -1,4 +1,6 @@
 body {
+  background-image: url('/img/dressingGameBackground.jpg');
+  background-size: cover;
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
@@ -7,6 +9,31 @@ body {
   margin-top: 20px;
   background-color: lightpink;
 }
+
+/* Landscape mode styles */
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) and (orientation: landscape) {
+    body {
+        /* Adjust body styles for landscape mode */
+        background-image: url('/img/dressingGameBackground.jpg');
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        background-color: lightpink;
+    }
+    .second img {
+        /* Adjust height of second image for landscape mode */
+        height: 40px;
+    }
+    .optionImg {
+        /* Adjust height of option images for landscape mode */
+        height: 100px;
+    }
+}
+
 
 .custom_btn {
   display: flex;
